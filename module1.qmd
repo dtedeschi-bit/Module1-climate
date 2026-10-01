@@ -191,8 +191,17 @@ Nasa_GISS_stuff |>
   arrange(desc(as.numeric(avg_temp_anomaly_by_year))) |>
   ggplot(aes(x = year,
              y = as.numeric(avg_temp_anomaly_by_year), group = 1)) +
+  theme_classic()+
+  geom_line(data = Nasa_GISS_stuff, 
+            aes(x = year, 
+                y = as.numeric(smoothed_anomaly),
+                linewidth = .5), 
+            color = "cyan")+
   geom_point()+
   geom_line()+
+  labs(x = "Year of Measurement", 
+       y = "Global Temp Anomaly Compared to 1951 - 1981 Average Temp ( C )", 
+       linewidth = "Overall Smoothed Trend")+
   scale_x_discrete(breaks = c(1880,
                                 1900,
                                 1920,
@@ -200,19 +209,20 @@ Nasa_GISS_stuff |>
                                 1960,
                                 1980,
                                 2000,
-                                2020))+
-  theme_classic()+
-  labs(x = "Year of Measurement", 
-       y = "Global Temp Anomaly Compared to 1951 - 1981 Average Temp ( C )")
-
+                                2020))
   
   
 ```
 
+The global yearly average temperature anomalies fluctuate about the smoothed trend. Low / high temperatures seem to cycle back and forth to low / high temps every 5 - 7 years. Beginning around 1970, this cycle continues however every local low / high temperature maximum is greater than in the previous cycle. The smooth trend reflects these cycles in that there are regions where fast change in temp anomaly occurs, followed by slow changes in temp anomaly.
 
 ### Q7 (1 point)
 
 Consider the "pause" analyzed in Lewandowsky et al. 2016. Do you see evidence for such a pause?
+
+For there to be a pause, the rate of change of temperature anomaly would have to be zero, which would be indicated by any horizontal regions of a curve. If we examine the smoothed trend from 1970 onwards, there exist no such horizontal areas, and furthermore, the slopes of every region of the curve remain positive, meaning warming has continued, and the slopes of the later areas of the curve ( ~1990 and onwards ) are steeper and steeper, meaning warming is accelerating, not slowing down. 
+
+
 
 ### Bonus 1 (1 point)
 
