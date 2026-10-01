@@ -113,7 +113,7 @@ co2_max_months |>
   geom_line()+
   xlab("Date of Measurement") +
   ylab("Average CO2 levels ( PPM )") +
-  labs(color = "Months with Most CO2")
+  labs(color = "Months with Most Seasonal CO2")
 
 
 ```
@@ -157,14 +157,58 @@ Nasa_GISS_stuff = Nasa_GISS_stuff
 ```
 
 
+There are three columns in the GISS global temp dataset. The first records the year the measurements were taken, the second describes the absolute mean of all temperature anomaly measurements taken in a given year and is expressed as a difference in comparison to the average surface temperature of the 1951 - 1980 time period, and the third represents the smoothed version of the second column's data using the Lowess regression method. Both the second and third column are in units of degrees Celsius.
+
+
+Surface temperature measurements were taken as follows: monitoring stations were grouped in 80 surface area boxes, each with equal area, and each station would obtain air temperature anomaly series for its box. Boxes that contained areas of ocean estimated air temperature from the water temperature recorded by boats / buoys. Then the station would condense all series into a single one, which was averaged with the other stations that occupied the same one of eight different latitude sections. The global mean was then obtained by averaging the eight latitude sections. 
+
+
 
 ### Q5 (1 point)
 
 Construct code to import the dataset from the above url in a format that can be used for transforming and visualization.
 
+```{r}
+Nasa_GISS_stuff = read_table("https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt",
+                             col_names = c("year",
+                                           "avg_temp_anomaly_by_year",
+                                           "smoothed_anomaly"))
+
+
+Nasa_GISS_stuff = Nasa_GISS_stuff[-c(1:4), ] 
+
+Nasa_GISS_stuff|> summarise(min = min(avg_temp_anomaly_by_year), max = max(avg_temp_anomaly_by_year))
+```
+
+
 ### Q6 (1 point)
 
 Plot the trend in global mean temperature over time. Describe what you see and how you interpret the patterns you observe.
+
+```{r}
+
+Nasa_GISS_stuff |>
+  arrange(desc(as.numeric(avg_temp_anomaly_by_year))) |>
+  ggplot(aes(x = year,
+             y = as.numeric(avg_temp_anomaly_by_year), group = 1)) +
+  geom_point()+
+  geom_line()+
+  scale_x_discrete(breaks = c(1880,
+                                1900,
+                                1920,
+                                1940,
+                                1960,
+                                1980,
+                                2000,
+                                2020))+
+  theme_classic()+
+  labs(x = "Year of Measurement", 
+       y = "Global Temp Anomaly Compared to 1951 - 1981 Average Temp ( C )")
+
+  
+  
+```
+
 
 ### Q7 (1 point)
 
