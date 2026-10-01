@@ -77,7 +77,43 @@ In which 3-month window are the \[CO~2~\] values at their seasonal peak? Create 
 
 ```{r}
 
-co2_max_months = co2 |> mutate(real_dates = date_decimal(decimal_date)) |> group_by(month, year) |> mutate(max_average = max(average))
+co2_max_months = co2 |> 
+  group_by(year) |> 
+  arrange(desc(average), .by_group = TRUE)|>
+  mutate(max_month = max(average),
+         second_max = average[2],
+         third_max = average[3]) |> 
+  select(max_month,
+         second_max,
+         third_max,
+         year,month,
+         average, decimal_date) 
+  
+
+
+co2_max_months |> 
+  filter(average == max_month | 
+           average == second_max | 
+           average == third_max )
+
+# it seems like april, may, and june have the highest CO2 measurements across the dataset.
+
+ 
+
+
+co2_max_months |> 
+  ggplot(aes(x = date_decimal(decimal_date), 
+             y = average, 
+             color = as.factor(month))) + 
+  geom_point() + 
+  scale_color_manual(values = c("4" = "forestgreen", 
+                                "5" = "forestgreen", 
+                                "6" = "forestgreen"))+
+  theme_classic() + 
+  geom_line()+
+  xlab("Date of Measurement") +
+  ylab("Average CO2 levels ( PPM )") +
+  labs(color = "Months with Most CO2")
 
 
 ```
