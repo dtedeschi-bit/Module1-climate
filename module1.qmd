@@ -126,6 +126,13 @@ Why does \[CO~2~\] peak in the months highlighted above? Consider the location o
 
 After reading Lewandowsky et al. 2016, how might you go about separating the long term trend and the seasonal variation in \[CO~2~\]?
 
+
+Mauna Loa is in Hawaii, and April, May, and June mark the start of the Hawaiian summer. Under warmer conditions, it is less likely for CO2 to be disolved in the ocean or any body of water, meaning its partial pressure in the surrounding atmosphere will increase slightly. At the same time, the local plants will have just emerged from the "winter" months, meaning they are probably less abundant than in late summer. Higher volumes of plant mass will consume more CO2, which would explain why average CO2 levels begin dropping right after they peak in april.
+
+Lewandowsky and associates separated the overall CO2 data into smaller 15-year trends and then calculated the average rate of CO2 increase in each window. Then they plotted each average against the total average of every CO2 measurement from 1970 onwards. We could apply a similar strategy here; since we care about seasonal variation and total variation, we could plot each month's average against the yearly average, then do this for each year in the data set, thereby making the overall trend clear while still illustrating that in a given year, the measurements might dance around the overall trend. 
+
+
+
 ## Global temperature
 
 Next, we turn to a global temperature anomaly [dataset](https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt) from NASA GISS, similar to the GMST used by Lewandowsky et al. 2016.
@@ -135,6 +142,21 @@ Next, we turn to a global temperature anomaly [dataset](https://data.giss.nasa.g
 Read some [background](https://data.giss.nasa.gov/gistemp/history/background.html) as well as the [simplified documentation](https://climate.nasa.gov/vital-signs/global-temperature/?intent=121) for this dataset.
 
 How are the measurements made? Describe each column in the dataset and its units. What is the temporal resolution of the data?
+
+```{r}
+
+Nasa_GISS_stuff = read_table("https://data.giss.nasa.gov/gistemp/graphs/graph_data/Global_Mean_Estimates_based_on_Land_and_Ocean_Data/graph.txt",
+                             col_names = c("year",
+                                           "avg_temp_anomaly_by_year",
+                                           "smoothed_anomaly"))
+
+
+Nasa_GISS_stuff = Nasa_GISS_stuff
+
+
+```
+
+
 
 ### Q5 (1 point)
 
