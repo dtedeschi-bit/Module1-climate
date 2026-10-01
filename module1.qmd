@@ -10,6 +10,7 @@ editor_options:
 #| warning: false
 library(tidyverse)
 library(ggpmisc)
+library(readr)
 
 ```
 
@@ -28,6 +29,7 @@ We will begin at the global scale by plotting the famed Mauna Loa CO~2~ curve at
 With data you've collected yourself, it is more common to store locally as a csv. However, we can use tidyverse tools to read directly from files stored online and will do so here to get the latest data.
 
 ```{r}
+#| echo: true
 #| warning: false
 #| output: false
 co2 <-read_table("https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt", 
@@ -48,9 +50,39 @@ head(co2)
 
 Create a timeseries plot of average \[CO~2~\]. Use `as.Date()` to create a formatted date for the x-axis. Label both the y-axis and add a line to connect the points.
 
+
+```{r}
+#| echo: true
+
+co2_filtered = co2
+
+
+co2_filtered |> ggplot(aes(x = date_decimal(decimal_date), 
+                           y = average )) +
+  geom_point() + 
+  geom_line()+
+  theme_classic() + 
+  xlab("Date of Measurement") + 
+  ylab("Average CO2 level ( PPM )")
+
+```
+
+I don't think geom_line is very helpful here; in fact I would rather not use it at all. 
+
+
+
 ### Q2 (1 point)
 
 In which 3-month window are the \[CO~2~\] values at their seasonal peak? Create another dataframe with these months selected and create a plot like above, but with the maximum months colored in "forestgreen".
+
+```{r}
+
+co2_max_months = co2 |> mutate(real_dates = date_decimal(decimal_date)) |> group_by(month, year) |> mutate(max_average = max(average))
+
+
+```
+
+
 
 ### Q3 (1 point)
 
