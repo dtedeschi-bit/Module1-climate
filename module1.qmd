@@ -12,6 +12,7 @@ library(tidyverse)
 library(ggpmisc)
 library(readr)
 library(zoo)
+library(ggbreak)
 ```
 
 ### Use of GitHub
@@ -113,7 +114,7 @@ co2_max_months |>
   ylab("Average CO2 levels ( PPM )") +
   labs(color = "Months with Most Seasonal CO2")
 
-
+#point and line sizes are low so that they look better in the rendered pdf 
 ```
 
 
@@ -328,6 +329,36 @@ Join your data with the Mauna Loa data and plot together, considering different 
 
 
 
+```{r}
+
+
+co2_filtered_average = co2_filtered |>
+  group_by(year) |> 
+  mutate(yearly_avg = mean(average))|>
+  select(yearly_avg,year) |>
+  unique()
+
+
+
+ice_core |> ggplot(aes(y = as.numeric(`co2_conc(ppmv)`),
+                       x = -as.numeric(`air_age(yr)`), 
+                       color = "Vostok Ice Core Data"))+ 
+  geom_point()+ 
+  geom_line()+
+  coord_cartesian(xlim = c(-430000, 1960))+
+  scale_x_break(c(0,1960), scales = .5)+
+  geom_point(data = co2_filtered_average,
+         aes(x = year,
+             y = yearly_avg, color = "Mauna Loa Station Data"))+
+  geom_line(data = co2_filtered_average,
+         aes(x = year,
+             y = yearly_avg, color = "Mauna Loa Station Data"))+
+  labs(x = "Year", y = "Co2 Concentration ( ppm )", color = "Dataset Used")+
+  theme_classic()
+
+  
+
+```
 
 
 
@@ -335,3 +366,7 @@ Join your data with the Mauna Loa data and plot together, considering different 
 ### Bonus 2 (1 point)
 
 Write a catchy title and short description in the style of a NYtimes infographic, contrasting the rate of anthropogenic vs. background climate change for a general public audience.
+
+
+
+
