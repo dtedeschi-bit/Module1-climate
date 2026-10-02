@@ -17,11 +17,11 @@ library(ggbreak)
 
 ### Use of GitHub
 
-Link to your forked GH repository:
+Link to your forked GH repository: https://github.com/dtedeschi-bit/Module1-climate
 
 ### Use of Quarto
 
-Link to your .qmd file:
+Link to your .qmd file: It's in the fork; I can't link it here.
 
 ## CO2 trends from Mauna Loa
 
