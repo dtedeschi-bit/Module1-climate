@@ -1,7 +1,7 @@
 # Module 1: Climate
 
 ## Team members and contributions
-To be updated
+Dante Tedeschi -- only contributor
 
 ## Learning objectives
 
