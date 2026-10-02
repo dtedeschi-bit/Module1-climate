@@ -11,7 +11,7 @@ editor_options:
 library(tidyverse)
 library(ggpmisc)
 library(readr)
-
+library(zoo)
 ```
 
 ### Use of GitHub
@@ -240,7 +240,8 @@ After downloading this dataset, create a folder entitled `data` and save the fil
 ```{r}
 
 
-ice_core = read_table("C:/Users/dante/OneDrive/Documents/Module1-climate/vostok.icecore.txt", col_names = c("depth(m)","ice_age(yr)","air_age(yr)","co2_conc(ppmv)"))
+ice_core = read_table("C:/Users/dante/OneDrive/Documents/Module1-climate/vostok.icecore.txt", 
+                      col_names = c("depth(m)","ice_age(yr)","air_age(yr)","co2_conc(ppmv)"))
 
 ice_core = ice_core[-c(1:20), ]
 
@@ -258,7 +259,28 @@ Transform the data as needed to create a plot in chronological order. Add at lea
 
 options(scipen = 999)
 
-ice_core
+
+#get three point average smoothing
+ice_core = ice_core |> 
+  mutate(three_point_avg = rollmean(x = as.numeric( `co2_conc(ppmv)`), 
+                                                         k = 3,
+                                                         fill = NA, 
+                                                         align = "center"))
+
+# get lowess smoothing 
+                      
+LOWESS_core = lowess(x = as.numeric(ice_core$`air_age(yr)`),
+                     y = as.numeric(ice_core$`co2_conc(ppmv)`), 
+                     f = 10, 
+                     iter = 2,
+                     delta = .01*diff(range(as.numeric(ice_core$`air_age(yr)`))))         
+           
+#no way i'm binding the LOWESS df to the ice_core df         
+
+#renaming it so column names don't confuse ggplot
+LOWESS_core = as_tibble(LOWESS_core) |>
+  rename(air_age_smooth = x, 
+         co2_conc_smooth = y)
 
 # plot of depth vs ice age 
 ice_core |> ggplot(aes(x = as.numeric( `ice_age(yr)`), 
@@ -268,25 +290,47 @@ ice_core |> ggplot(aes(x = as.numeric( `ice_age(yr)`),
   theme_classic()+
   labs(x = "Age of Ice ( yr )", y = "Depth of Measurement ( m )")
 
-# plot of co2 conc. over time 
+# plot of co2 conc. over time with smoothed lines
 
 ice_core |> ggplot(aes(y = as.numeric(`co2_conc(ppmv)`), 
                        x = as.numeric( `air_age(yr)`))) + 
-  geom_point() +
-  geom_line()+
+  geom_point(color = "white") +
+  geom_line(color = "white")+
+  geom_line(data = LOWESS_core, 
+            aes(x = air_age_smooth, 
+                y = co2_conc_smooth, 
+                color = "LOWESS Regression"))+
+  geom_line(data = ice_core, 
+            aes(x = as.numeric(`air_age(yr)`), 
+                y = as.numeric(three_point_avg), 
+                color = "Three-Point Average"), linewidth = 1.5)+
   scale_x_continuous(transform = "reverse")+
   theme_classic()+
-  labs(x = "Age of Air ( years before present )", y = "CO2 Concentration ( ppm )")
-
+  theme(panel.background = element_rect(fill = "black"), 
+        plot.background = element_rect(fill = "black"),
+        axis.title = element_text(color = "white"),
+        axis.text = element_text(color = "white"),
+        axis.ticks = element_line(color = "white"))+
+  labs(x = "Age of Air ( years before present )", 
+       y = "CO2 Concentration ( ppm )", 
+       color = "Smoothing Average Method")
 
 
 ```
 
+I would like to sepcify that I had no idea about smoothing averages before starting this homework, so the ones I'm using here are the LOWESS regression because it was featured in the NASA GISS global temp dataset and the simple moving average because it was the first thing that popped up when I googled what a smoothing average was. 
 
+For the smoothing windows, I changed the number of points for the point average and looked a what came out, and it seems like altering the number of points included in each sweep doesn't really change the shape of the curve that much, so I went with a 3 point average because the curve began as close to the start of the data set as possible. The same is true for the LOWESS regression; changing the smooth span value does not have much of an effect on the shape of the curve, so I went with 10 because that was my initial entry.
 
 ### Q10 (1 point)
 
 Join your data with the Mauna Loa data and plot together, considering different colors for the different datasets.
+
+
+
+
+
+
 
 ### Bonus 2 (1 point)
 
