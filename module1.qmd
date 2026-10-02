@@ -41,10 +41,7 @@ co2 <-read_table("https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt",
 
 You can examine these data in several ways. One option is to use your mouse in the Environment tab and click on the dataset name. Alternatively, you can type `View(co2)` in your console to achieve the same outcome. Below are some other common options to understand the data structure at a glance.
 
-```{r}
-str(co2)
-head(co2)
-```
+
 
 ### Q1 (1 point)
 
@@ -59,8 +56,8 @@ co2_filtered = co2
 
 co2_filtered |> ggplot(aes(x = date_decimal(decimal_date), 
                            y = average )) +
-  geom_point() + 
-  geom_line()+
+  geom_point(size = .5) + 
+  geom_line( linewidth = .05)+
   theme_classic() + 
   xlab("Date of Measurement") + 
   ylab("Average CO2 level ( PPM )")
@@ -91,12 +88,13 @@ co2_max_months = co2 |>
   
 
 
-co2_max_months |> 
-  filter(average == max_month | 
-           average == second_max | 
-           average == third_max )
+#co2_max_months |> 
+ # filter(average == max_month | 
+  #         average == second_max | 
+   #        average == third_max )
 
-# it seems like april, may, and june have the highest CO2 measurements across the dataset.
+# it seems like april, may, and june 
+#have the highest CO2 measurements across the dataset.
 
  
 
@@ -104,13 +102,13 @@ co2_max_months |>
 co2_max_months |> 
   ggplot(aes(x = date_decimal(decimal_date), 
              y = average, 
-             color = as.factor(month))) + 
-  geom_point() + 
+             color = as.factor(month), group = 1)) + 
+  geom_point(size = .5) + 
   scale_color_manual(values = c("4" = "forestgreen", 
                                 "5" = "forestgreen", 
                                 "6" = "forestgreen"))+
   theme_classic() + 
-  geom_line()+
+  geom_line(linewidth = .05)+
   xlab("Date of Measurement") +
   ylab("Average CO2 levels ( PPM )") +
   labs(color = "Months with Most Seasonal CO2")
@@ -127,9 +125,9 @@ Why does \[CO~2~\] peak in the months highlighted above? Consider the location o
 After reading Lewandowsky et al. 2016, how might you go about separating the long term trend and the seasonal variation in \[CO~2~\]?
 
 
-Mauna Loa is in Hawaii, and April, May, and June mark the start of the Hawaiian summer. Under warmer conditions, it is less likely for CO2 to be disolved in the ocean or any body of water, meaning its partial pressure in the surrounding atmosphere will increase slightly. At the same time, the local plants will have just emerged from the "winter" months, meaning they are probably less abundant than in late summer. Higher volumes of plant mass will consume more CO2, which would explain why average CO2 levels begin dropping right after they peak in april.
+  Mauna Loa is in Hawaii, and April, May, and June mark the start of the Hawaiian summer. Under warmer conditions, it is less likely for CO2 to be disolved in the ocean or any body of water, meaning its partial pressure in the surrounding atmosphere will increase slightly. At the same time, the local plants will have just emerged from the "winter" months, meaning they are probably less abundant than in late summer. Higher volumes of plant mass will consume more CO2, which would explain why average CO2 levels begin dropping right after they peak in april.
 
-Lewandowsky and associates separated the overall CO2 data into smaller 15-year trends and then calculated the average rate of CO2 increase in each window. Then they plotted each average against the total average of every CO2 measurement from 1970 onwards. We could apply a similar strategy here; since we care about seasonal variation and total variation, we could plot each month's average against the yearly average, then do this for each year in the data set, thereby making the overall trend clear while still illustrating that in a given year, the measurements might dance around the overall trend. 
+  Lewandowsky and associates separated the overall CO2 data into smaller 15-year trends and then calculated the average rate of CO2 increase in each window. Then they plotted each average against the total average of every CO2 measurement from 1970 onwards. We could apply a similar strategy here; since we care about seasonal variation and total variation, we could plot each month's average against the yearly average, then do this for each year in the data set, thereby making the overall trend clear while still illustrating that in a given year, the measurements might dance around the overall trend. 
 
 
 
@@ -237,6 +235,19 @@ Previously hosted by Oak Ridge National Lab, the [data](https://zenodo.org/recor
 ### Q8 (1 point)
 
 After downloading this dataset, create a folder entitled `data` and save the file within the folder with a .txt extension. Read this file into R. What are the columns and units? In the "Vostok CO2 record" section of Barnola et al. 1987, what is the temporal resolution of the data?
+
+
+```{r}
+
+
+ice_core = read_table("C:/Users/dante/OneDrive/Documents/Module1-climate/vostok.icecore.txt", col_names = c("depth(m)","ice_age(yr)","air_age(yr)","co2_conc(ppmv)"))
+
+ice_core = ice_core[-c(1:20), ]
+
+```
+
+Column 1 represents the depth in meters in the ice core that a particular measurement was taken. Column two indicates the age in years of the ice at the depth the measurement was taken, while column three indicates the age of the air recovered from the ice at that depth in years. Column 4 reports the concentration of CO2 present in the air sample recovered in parts per million. In Barnola et. al, the time scale dates from present day to around 160k years ago with each measurement corresponding to about 2000 years of history, however in this dataset, the time scale extends to around 420k years ago.
+
 
 ### Q9 (1 point)
 
