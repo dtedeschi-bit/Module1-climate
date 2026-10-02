@@ -253,6 +253,37 @@ Column 1 represents the depth in meters in the ice core that a particular measur
 
 Transform the data as needed to create a plot in chronological order. Add at least two different smoothing window averages to your plot. How did you select the smoothing windows?
 
+
+```{r}
+
+options(scipen = 999)
+
+ice_core
+
+# plot of depth vs ice age 
+ice_core |> ggplot(aes(x = as.numeric( `ice_age(yr)`), 
+                       y = as.numeric( `depth(m)`))) + 
+  geom_point() +
+  scale_y_continuous(transform = "reverse")+
+  theme_classic()+
+  labs(x = "Age of Ice ( yr )", y = "Depth of Measurement ( m )")
+
+# plot of co2 conc. over time 
+
+ice_core |> ggplot(aes(y = as.numeric(`co2_conc(ppmv)`), 
+                       x = as.numeric( `air_age(yr)`))) + 
+  geom_point() +
+  geom_line()+
+  scale_x_continuous(transform = "reverse")+
+  theme_classic()+
+  labs(x = "Age of Air ( years before present )", y = "CO2 Concentration ( ppm )")
+
+
+
+```
+
+
+
 ### Q10 (1 point)
 
 Join your data with the Mauna Loa data and plot together, considering different colors for the different datasets.
